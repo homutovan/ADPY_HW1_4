@@ -1,5 +1,3 @@
-#Task_1_3_1
-
 def parse_dict(my_dict):
     my_string = ''
     for key, val in my_dict.items():
@@ -30,31 +28,53 @@ class Contact:
     def __contains__(self, item):
         return item in self.items
 
-#Task_1_3_2
+#Task_1_4_(1_2)
 
+from time import strftime, localtime
+
+def param_logger(file_patch):
+    def logger(method):
+        def wrapper(self, *args, **kwargs):  
+            res = method(self, *args, **kwargs)
+            write_string = f'{strftime(f"%y-%m-%d %H.%M.%S", localtime())} {method.__name__} {args} {kwargs} {res}\n'
+            with open(file_patch, 'a', encoding='utf8') as file:
+                file.write(write_string)
+            return res
+        return wrapper
+    return logger
+
+file_patch = 'log.txt'
+
+#Task_1_4_3
 class PhoneBook:
+    @param_logger(file_patch)  
     def __init__(self, book_name, contact_list = []):
         self.book_name = book_name
         self.contact_list = contact_list
         
+    @param_logger(file_patch)    
     def add_contact(self, *args, **kwargs):
         self.contact_list.append(Contact(*args, **kwargs))
         self.contact_list.sort()
         
+    @param_logger(file_patch)      
     def view_contacts(self):
         for contact in self.contact_list:
             print(contact)
-              
+            
+    @param_logger(file_patch)        
     def view_favourite(self):
         for contact in self.contact_list:
             if contact.favourites:
                 print(contact)
                 
+    @param_logger(file_patch)            
     def search_contact(self, search_string):
         for contact in self.contact_list:
             if search_string in contact:
                 print(contact)
                 
+    @param_logger(file_patch)          
     def delete_contact(self, phone_number):
         for contact in self.contact_list:
             if phone_number in contact:
@@ -79,10 +99,7 @@ def adv_print(*args, **kwargs):
     print(output_string, **kwargs)
         
 if __name__ == '__main__':
-    
-    # jhon = Contact('Jhon', 'Smith', '+71234567809', telegram='@jhony', email='jhony@smith.com')
-    # print(jhon)
-    
+    print('===Добавляем контакты===\n')
     book = PhoneBook('Телефонная книга')
     book.add_contact('Jhon', 'Smith', '+71234567809', telegram='@jhony', email='jhony@smith.com')
     book.add_contact('John', 'Lennon', '+79234856583', telegram='@lennon', email='lennon@google.com', favourites = True)
